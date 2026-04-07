@@ -1,66 +1,62 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { useState, useEffect } from "react";
+import LandingPage from "./components/LandingPage";
+import AuthPage from "./components/AuthPage";
+import MainApp from "./components/MainApp";
+import ExploreMap from "./components/ExploreMap";
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+export default function Page() {
+  const [view, setView] = useState("landing");
+  const [user, setUser] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("dentafind_user");
+    if (saved) {
+      try { const u = JSON.parse(saved); setUser(u); setView("app"); } catch {}
+    }
+    // Ask for location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => setUserLocation({ lat: 28.6139, lng: 77.209 }), // Default Delhi
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else {
+      setUserLocation({ lat: 28.6139, lng: 77.209 });
+    }
+  }, []);
+
+  const handleLogin = (u) => {
+    setUser(u);
+    localStorage.setItem("dentafind_user", JSON.stringify(u));
+    setView("app");
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("dentafind_user");
+    setView("landing");
+  };
+
+  const handleExploreMap = () => setView("explore");
+  const handleAuthGate = () => setShowAuthPopup(true);
+  const handleCloseAuth = () => setShowAuthPopup(false);
+
+  // Auth popup overlay
+  const AuthPopup = showAuthPopup ? (
+    <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(12px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div style={{ position: "relative", width: "100%", maxWidth: 500 }}>
+        <button onClick={handleCloseAuth} style={{ position: "absolute", top: -44, right: 0, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "50%", width: 36, height: 36, color: "#fff", cursor: "pointer", fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+        <AuthPage onLogin={handleLogin} onBack={handleCloseAuth} />
+      </div>
     </div>
-  );
+  ) : null;
+
+  if (view === "landing") return <><LandingPage onAuth={() => setView("auth")} onExploreMap={handleExploreMap} userLocation={userLocation} />{AuthPopup}</>;
+  if (view === "explore") return <><ExploreMap userLocation={userLocation} onAuth={handleAuthGate} onBack={() => setView("landing")} user={user} onLogin={handleLogin} />{AuthPopup}</>;
+  if (view === "auth") return <AuthPage onLogin={handleLogin} onBack={() => setView("landing")} />;
+  if (view === "app" && user) return <MainApp user={user} onLogout={handleLogout} userLocation={userLocation} />;
+  return null;
 }

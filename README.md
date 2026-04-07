@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DentaFind
 
-## Getting Started
+A premium dental booking platform built with Next.js, MongoDB, and Leaflet maps.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 🟣 Premium purple gradient dark theme with glassmorphism
+- 👤 User/Doctor role-based registration
+- 🦷 Browse, search, and filter dentists
+- 🗺️ Interactive map with OpenStreetMap (free)
+- 📅 Appointment booking with date/time selection
+- 💬 Real-time chat between patients and doctors
+- 🩺 Doctor dashboard for profile setup and appointment management
+- 🔒 Secure authentication with bcrypt password hashing
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Next.js 14** (App Router)
+- **MongoDB Atlas** (free tier)
+- **NextAuth.js** (JWT auth)
+- **Leaflet + OpenStreetMap** (free maps)
+- **Lucide React** (icons)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. Clone this repo
+2. Run `npm install`
+3. Create `.env.local` with:
+   ```
+   MONGODB_URI=your_mongodb_connection_string
+   NEXTAUTH_SECRET=your_secret_key
+   NEXTAUTH_URL=http://localhost:3000
+   ```
+4. Run `npm run dev`
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy to Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push to GitHub
+2. Import in Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
